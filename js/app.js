@@ -1,8 +1,13 @@
 /*
  * Create a list that holds all of your cards
  */
-
-
+const cards = document.querySelectorAll('.card');
+let deck = [];
+for (let i = 0; i < cards.length; i++) {
+    let card = cards[i];
+    deck.push(card);
+}
+debugger
 /*
  * Display the cards on the page
  *   - shuffle the list of cards using the provided "shuffle" method below
@@ -25,6 +30,8 @@ function shuffle(array) {
     return array;
 }
 
+deck = shuffle(deck);
+console.log(deck); debugger
 
 /*
  * set up the event listener for a card. If a card is clicked:
