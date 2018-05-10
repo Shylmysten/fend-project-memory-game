@@ -4,6 +4,8 @@ const gameData = {
     moves: 0,
     starRating: 3
 }
+
+/* ScoreBoard Selectors */
 document.querySelector('.moves').innerText= gameData.moves;
 
 /*
@@ -71,7 +73,15 @@ const cardClick = (event) => {
         // 3. if the card isn't open
             // a. add open, show, flipInY, and animated classes
             event.target.classList.add('animated','open','show','flipInY');
+            // b. add card(icon string/innerHTML?) to open list
+            gameData.openCards.push(event.target.innerHTML);
+            console.log(gameData.openCards);
+            // c. add 1 to click count (to keep track of moves)
+            gameData.moves++;
+            // d. Update moves in UI
+            document.querySelector('.moves').innerText=gameData.moves;
 
+            // TODO: d. check moveCount for star rating
 
     }
 
