@@ -12,21 +12,19 @@ for (let i = 0; i < cards.length; i++) {
  * Display the cards on the page
  */
 //   1. shuffle the list of cards using the provided "shuffle" method below
-        deck = shuffle(deck); 
-//   2.
+        deck = shuffle(deck);
+//   2. Update UI with the new deck
 //      a. select deck in the UI
         const UIDeck = document.querySelector('.deck');
-//      b. create document fragment to attach card elements to
-        const fragment = document.createDocumentFragment();
-//      a. remove all list items from the ul element
+//      b. remove all list items(cards) from the ul(deck) element
         while (UIDeck.firstChild) {
             UIDeck.removeChild(UIDeck.firstChild);
         }
-
-//   3. add each card's HTML to the UI
-//      a. loop through each card and create its HTML
+//      c. create document fragment to attach card elements to
+        const fragment = document.createDocumentFragment();
+//      d. loop through each card and create its HTML
         buildNewCardTree(deck);
-//      b. Add fragment to the DOM
+//      e. Add fragment(newly shuffled deck) to the DOM
         UIDeck.appendChild(fragment);
 
 
