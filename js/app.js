@@ -1,19 +1,46 @@
 /*
  * Create a list that holds all of your cards
  */
-const cards = document.querySelectorAll('.card');
+let cards = document.querySelectorAll('.card');
 let deck = [];
 for (let i = 0; i < cards.length; i++) {
     let card = cards[i];
     deck.push(card);
 }
-debugger
+
 /*
  * Display the cards on the page
- *   - shuffle the list of cards using the provided "shuffle" method below
- *   - loop through each card and create its HTML
- *   - add each card's HTML to the page
  */
+//   1. shuffle the list of cards using the provided "shuffle" method below
+        deck = shuffle(deck); 
+//   2.
+//      a. select deck in the UI
+        const UIDeck = document.querySelector('.deck');
+//      b. create document fragment to attach card elements to
+        const fragment = document.createDocumentFragment();
+//      a. remove all list items from the ul element
+        while (UIDeck.firstChild) {
+            UIDeck.removeChild(UIDeck.firstChild);
+        }
+
+//   3. add each card's HTML to the UI
+//      a. loop through each card and create its HTML
+        buildNewCardTree(deck);
+//      b. Add fragment to the DOM
+        UIDeck.appendChild(fragment);
+
+
+
+
+
+function buildNewCardTree(array) {
+    for (let i = 0; i < array.length; i++) {
+        const newElement = array[i];
+        fragment.appendChild(newElement);
+    }
+    return fragment
+}
+
 
 // Shuffle function from http://stackoverflow.com/a/2450976
 function shuffle(array) {
@@ -29,9 +56,6 @@ function shuffle(array) {
 
     return array;
 }
-
-deck = shuffle(deck);
-console.log(deck); debugger
 
 /*
  * set up the event listener for a card. If a card is clicked:
