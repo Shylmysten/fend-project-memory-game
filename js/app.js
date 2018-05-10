@@ -100,6 +100,9 @@ const cardClick = (event) => {
 
 
     // 4. Are there two cards in the open list?
+    if (gameData.openCards.length === 2) {
+        console.log("there are currently two open cards");
+    }
         // a. do cards(icon strings/innerHTML?) match?
             // i. if cards match
                 // aa. remove classes open, show, animated, flipInY
