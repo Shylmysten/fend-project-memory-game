@@ -5,8 +5,14 @@ const gameData = {
     starRating: 3
 }
 
-/* ScoreBoard Selectors */
+/* ScoreBoard */
+
+// set moves to 0 in UI
 document.querySelector('.moves').innerText= gameData.moves;
+
+// Get Rating selector and set it to stars
+const stars = document.querySelector('.stars');
+
 
 /*
  * Create a list that holds all of your cards
@@ -75,13 +81,16 @@ const cardClick = (event) => {
             event.target.classList.add('animated','open','show','flipInY');
             // b. add card(icon string/innerHTML?) to open list
             gameData.openCards.push(event.target.innerHTML);
-            console.log(gameData.openCards);
             // c. add 1 to click count (to keep track of moves)
             gameData.moves++;
             // d. Update moves in UI
             document.querySelector('.moves').innerText=gameData.moves;
 
-            // TODO: d. check moveCount for star rating
+            // e. check moveCount for star rating
+            if (gameData.moves === 26|gameData.moves === 32|gameData.moves === 38) {
+             stars.removeChild(stars.firstElementChild);
+            }
+
 
     }
 
