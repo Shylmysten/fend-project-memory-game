@@ -2,7 +2,8 @@
 const gameData = {
     openCards: [],
     moves: 0,
-    starRating: 3
+    starRating: 3,
+    matchedCards: 0
 }
 
 /* ScoreBoard */
@@ -71,10 +72,14 @@ function shuffle(array) {
     return array;
 }
 
+
 const cardClick = (event) => {
     // 1. has card already been matched?
-    if (event.target.classList.contains('match')) {
-    } else if (event.target.classList.contains('open')|event.target.classList.contains('show')) { // 2. is the card already open?
+    if (!event.target.classList.contains('card')|event.target.classList.contains('match')|event.target.parentElement.classList.contains('match')) {
+        return;
+    } else if (event.target.classList.contains('open')|event.target.parentElement.classList.contains('open')) { // 2. is the card already open?
+        console.log("that card is already open!");
+        return;
     } else {
         // 3. if the card isn't open
             // a. add open, show, flipInY, and animated classes
@@ -90,6 +95,47 @@ const cardClick = (event) => {
             if (gameData.moves === 26|gameData.moves === 32|gameData.moves === 38) {
              stars.removeChild(stars.firstElementChild);
             }
+            // 4. Are there two cards in the open list?
+            if (gameData.openCards.length === 2) {
+
+                // Places icon HTML for each open card into a variable AS A STRING
+                const cardSuit1 = gameData.openCards[0];
+                const cardSuit2 = gameData.openCards[1];
+
+                // a. do cards(icon strings/innerHTML?) match?
+                if (cardSuit1 === cardSuit2) {
+                    // i. if cards match
+
+                    // increment matchedCards (to keep track of cards left)
+                    gameData.matchedCards+=2;
+                    console.log(gameData.matchedCards);
+                    // What are are the matching icons
+                    const cardSuit = "." + (event.target.firstElementChild.classList)[1];
+                    // Which icon elements on the page have this class?
+                    const matchedSuit = document.querySelectorAll(cardSuit);
+
+                    // Exactly where are they located in the page
+                    const card1 = matchedSuit[0].parentElement;
+                    const card2 = matchedSuit[1].parentElement;
+
+                    // aa. remove classes open, show, animated, flipInY
+                    card1.classList.remove('open','show','flipInY');
+                    card2.classList.remove('open','show','flipInY');
+                    // bb. add class wobble
+                    card1.classList.add('rubberBand');
+                    card2.classList.add('rubberBand');
+                    // bb. add class match to both cards
+                    card1.classList.add('match');
+                    card2.classList.add('match');
+                    // dd. reset open cards list.
+                    gameData.openCards = [];
+                    console.log(gameData.openCards);
+
+                } else {
+                    // b. if cards don't match
+                        // i. Flip cards over (remove open, show from classList)
+                        // ii. reset open cards list.
+                }
 
 
     }
@@ -99,19 +145,13 @@ const cardClick = (event) => {
 
 
 
-    // 4. Are there two cards in the open list?
-    if (gameData.openCards.length === 2) {
-        console.log("there are currently two open cards");
+
+
+
+
+
     }
-        // a. do cards(icon strings/innerHTML?) match?
-            // i. if cards match
-                // aa. remove classes open, show, animated, flipInY
-                // bb. add class match to both cards
-                // cc. increment matchedCards (to keep track of cards left)
-                // dd. reset open cards list.
-        // b. if cards don't match
-            // i. Flip cards over (remove open, show from classList)
-            // ii. reset open cards list.
+
 
     // 5. Has matched cards reached 16?
         // a. produce Winnner Modal
