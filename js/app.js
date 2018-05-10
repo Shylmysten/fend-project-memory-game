@@ -64,6 +64,38 @@ function shuffle(array) {
 }
 
 const cardClick = (event) => {
+    // 1. has card already been matched?
+    if (event.target.classList.contains('match')) {
+    } else if (event.target.classList.contains('open')|event.target.classList.contains('show')) { // 2. is the card already open?
+    } else {
+        // 3. if the card isn't open
+            // a. add open, show, flipInY, and animated classes
+            event.target.classList.add('animated','open','show','flipInY');
+
+
+    }
+
+
+
+
+
+
+    // 4. Are there two cards in the open list?
+        // a. do cards(icon strings/innerHTML?) match?
+            // i. if cards match
+                // aa. remove classes open, show, animated, flipInY
+                // bb. add class match to both cards
+                // cc. increment matchedCards (to keep track of cards left)
+                // dd. reset open cards list.
+        // b. if cards don't match
+            // i. Flip cards over (remove open, show from classList)
+            // ii. reset open cards list.
+
+    // 5. Has matched cards reached 16?
+        // a. produce Winnner Modal
+
+
+
 
 
 
