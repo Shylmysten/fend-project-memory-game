@@ -122,3 +122,7 @@ h1 {
     float: right;
     cursor: pointer;
 }
+
+.deck .card.wobble {
+    background-color: #F95B3C !important;
+}
