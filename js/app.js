@@ -2,58 +2,71 @@
 const gameData = {
     openCards: [],
     moves: 0,
-    starRating: 3,
-    matchedCards: 0
+    rank: 3,
+    matchedCards: 0,
+    stars: document.querySelector('.stars'),
+    seconds: 0,
+    minutes: 0
 }
 
-/* ScoreBoard */
-
-// set moves to 0 in UI
-document.querySelector('.moves').innerText= gameData.moves;
-
-// Get Rating selector and set it to stars
-const stars = document.querySelector('.stars');
+let interval = null;
+init();
 
 
-/*
- * Create a list that holds all of your cards
- */
-const cards = document.querySelectorAll('.card');
-let deck = [];
-for (let i = 0; i < cards.length; i++) {
-    const card = cards[i];
-    deck.push(card);
-}
-
-/*
- * Display the cards on the page
- */
-//   1. shuffle the list of cards using the provided "shuffle" method below
-        deck = shuffle(deck);
-//   2. Update UI with the new deck
-//      a. select deck in the UI
-        const UIDeck = document.querySelector('.deck');
-//      b. remove all list items(cards) from the ul(deck) element
-        while (UIDeck.firstChild) {
-            UIDeck.removeChild(UIDeck.firstChild);
-        }
-//      c. create document fragment to attach card elements to
-        const fragment = document.createDocumentFragment();
-//      d. loop through each card and create its HTML
-        buildNewCardTree(deck);
-//      e. Add fragment(newly shuffled deck) to the DOM
-        UIDeck.appendChild(fragment);
+function init() {
+    clearInterval(interval);
+    gameData.seconds = 0;
+    gameData.minutes = 0;
+    interval = setInterval( updateTimer , 1000);
+    // set moves to 0 in UI
+    gameData.moves = 0;
+    document.querySelector('.moves').innerText= gameData.moves+" Moves";
+    gameData.rank=3;
+    gameData.openCards = [];
+    gameData.stars.innerHTML = `<li><i class="fa fa-star"></i></li>
+                        <li><i class="fa fa-star"></i></li>
+                        <li><i class="fa fa-star"></i></li>`;
 
 
-
-
-
-function buildNewCardTree(array) {
-    for (let i = 0; i < array.length; i++) {
-        const newElement = array[i];
-        fragment.appendChild(newElement);
+    // Create a list that holds all of your cards
+    const cards = document.querySelectorAll('.card');
+    let deck = [];
+    for (let i = 0; i < cards.length; i++) {
+        const card = cards[i];
+        deck.push(card);
     }
-    return fragment
+
+// Display the cards on the page
+
+//   1. shuffle the list of cards using the provided "shuffle" method below
+    deck = shuffle(deck);
+
+//   2. Update UI with the new deck
+    //  a. select deck in the UI
+    const UIDeck = document.querySelector('.deck');
+    //  b. remove all list items(cards) from the ul(deck) element
+    while (UIDeck.firstChild) {
+        UIDeck.removeChild(UIDeck.firstChild);
+    }
+
+    //  c. create document fragment to attach card elements to
+    const shuffledCards = document.createDocumentFragment();
+
+    //  d. loop through each card and create its HTML
+    for (let i = 0; i < deck.length; i++) {
+        const newElement = deck[i];
+        newElement.setAttribute('class', 'card');
+        shuffledCards.appendChild(newElement);
+    }
+
+    //  e. Append fragment(newly shuffled cards) to the ul.deck in the DOM
+    UIDeck.appendChild(shuffledCards);
+
+    //  d. set up the event listener for a card. If a card is clicked:
+    UIDeck.addEventListener('click', cardClick);
+    //  e. set up event listener for restart button
+    document.querySelector('.restart').addEventListener('click', init);
+
 }
 
 
@@ -72,100 +85,96 @@ function shuffle(array) {
     return array;
 }
 
-
-const cardClick = (event) => {
-    // 1. has card already been matched?
-    if (!event.target.classList.contains('card')|event.target.classList.contains('match')|event.target.parentElement.classList.contains('match')) {
+function cardClick(event) {
+    // 1. is the target a card? is it already open, or matched?
+    if (!event.target.matches('.card')|event.target.matches('.open')|event.target.classList.contains('match')) {
+        // then we're not interested
         return;
-    } else if (event.target.classList.contains('open')|event.target.parentElement.classList.contains('open')) { // 2. is the card already open?
-        console.log("that card is already open!");
-        return;
-    } else {
-        // 3. if the card isn't open
-            // a. add open, show, flipInY, and animated classes
-            event.target.classList.add('animated','open','show','flipInY');
-            // b. add card(icon string/innerHTML?) to open list
-            gameData.openCards.push(event.target.innerHTML);
-            // c. add 1 to click count (to keep track of moves)
-            gameData.moves++;
-            // d. Update moves in UI
-            document.querySelector('.moves').innerText=gameData.moves;
+    }
 
-            // e. check moveCount for star rating
-            if (gameData.moves === 26|gameData.moves === 32|gameData.moves === 38) {
-             stars.removeChild(stars.firstElementChild);
-            }
-            // 4. Are there two cards in the open list?
-            if (gameData.openCards.length === 2) {
+    // 3. if the card isn't open
+    // a. add open, show, flipInY, and animated classes
+    event.target.classList.add('animated','open','show','flipInY');
+    // b. add card(icon string/innerHTML?) to open list
+    gameData.openCards.push(event.target);
+    // c. add 1 to click count (to keep track of moves)
+    gameData.moves++;
+    // d. Update moves in UI
+    document.querySelector('.moves').innerText=gameData.moves +" Moves";
+    // e. check moveCount for star rating
+    if (gameData.moves === 26|gameData.moves === 38|gameData.moves === 48) {
+        gameData.stars.removeChild(gameData.stars.firstElementChild);
+        gameData.rank--;
+    }
 
-                // Places icon HTML for each open card into a variable AS A STRING
-                const cardSuit1 = gameData.openCards[0];
-                const cardSuit2 = gameData.openCards[1];
+    // 4. Are there two cards in the open list?
+    if (gameData.openCards.length === 2) {
+        // a. Open cards
+        const card1 = gameData.openCards[0];
+        const card2 = gameData.openCards[1];
+        // b. Suit of open cards (icons)
+        cardSuit1 = gameData.openCards[0].firstChild.classList[1]
+        cardSuit2 = gameData.openCards[1].firstChild.classList[1]
 
-                // a. do cards(icon strings/innerHTML?) match?
-                if (cardSuit1 === cardSuit2) {
-                    // i. if cards match
 
-                    // increment matchedCards (to keep track of cards left)
-                    gameData.matchedCards+=2;
-                    console.log(gameData.matchedCards);
-                    // What are are the matching icons
-                    const cardSuit = "." + (event.target.firstElementChild.classList)[1];
-                    // Which icon elements on the page have this class?
-                    const matchedSuit = document.querySelectorAll(cardSuit);
+        // c. do the two cards classes (STRINGS) match?
+        if (cardSuit1 === cardSuit2) {
+            // i. if cards match
 
-                    // Exactly where are they located in the page
-                    const card1 = matchedSuit[0].parentElement;
-                    const card2 = matchedSuit[1].parentElement;
+            // ii. increment matchedCards (to keep track of cards left)
+            gameData.matchedCards+=2;
 
-                    // aa. remove classes open, show, animated, flipInY
-                    card1.classList.remove('open','show','flipInY');
-                    card2.classList.remove('open','show','flipInY');
-                    // bb. add class wobble
-                    card1.classList.add('rubberBand');
-                    card2.classList.add('rubberBand');
-                    // bb. add class match to both cards
-                    card1.classList.add('match');
-                    card2.classList.add('match');
-                    // dd. reset open cards list.
-                    gameData.openCards = [];
-                    console.log(gameData.openCards);
-
-                } else {
-                    // b. if cards don't match
-                        // i. Flip cards over (remove open, show from classList)
-                        // ii. reset open cards list.
+            // iii. remove classes open, show, animated, flipInY
+            card1.classList.remove('open','show','flipInY');
+            card2.classList.remove('open','show','flipInY');
+            // iv. add class rubberBand
+            card1.classList.add('rubberBand');
+            card2.classList.add('rubberBand');
+            // v. add class match to both cards
+            card1.classList.add('match');
+            card2.classList.add('match');
+            } else {
+            // vi. if cards don't match
+            card1.classList.remove('flipInY');
+            card2.classList.remove('flipInY');
+            // vii. Function wobble calls allows wobble animation to complete
+            // before flipping the cards back over and removing the wobble class
+            function wobble() {
+                setTimeout(function () {
+                    card1.classList.remove('show','open', 'wobble');
+                    card2.classList.remove('show','open','wobble');
+                    }, 1000);
+                card1.classList.add('wobble');
+                card2.classList.add('wobble');
                 }
 
+            wobble();
+
+        }
+
+    // ii. clear open cards list.
+    gameData.openCards = [];
 
     }
-
-
-
-
-
-
-
-
-
-
-
-    }
-
-
     // 5. Has matched cards reached 16?
         // a. produce Winnner Modal
-
-
-
-
-
+    if (gameData.matchedCards === 16) {
+        let time = document.querySelector('.clock').innerText;
+        clearInterval(interval);
+    }
 
 }
-/*
- 1. set up the event listener for a card. If a card is clicked:
- */
-    UIDeck.addEventListener('click', cardClick);
+
+
+function updateTimer() {
+let sec = 0;
+const secs = (++gameData.seconds%60).toString();
+const mins = parseInt((gameData.seconds/60)).toString();
+document.getElementById("seconds").innerHTML= secs.length < 2 ? "0" + secs:secs;
+document.getElementById("minutes").innerHTML= mins.length < 2 ? "0" + mins:mins;
+}
+
+
  /*  - display the card's symbol (put this functionality in another function that you call from this one) */
 
 
