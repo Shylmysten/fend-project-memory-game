@@ -123,6 +123,12 @@ h1 {
     cursor: pointer;
 }
 
+
 .deck .card.wobble {
     background-color: #F95B3C !important;
+}
+
+.clock {
+    margin-left: 15px;
+    margin-right: 15px;
 }
