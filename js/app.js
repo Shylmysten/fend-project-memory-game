@@ -8,6 +8,7 @@ const gameData = {
   seconds: 0,
   minutes: 0
 };
+
 // initialize variable interval as global to be used in other functions
 let interval = null;
 // Initialize begins and resets the game
@@ -22,6 +23,8 @@ function init() {
   gameData.seconds = 0;
   gameData.minutes = 0;
   interval = setInterval(updateTimer, 1000);
+  // reset cards matched back to 0
+  gameData.matchedCards = 0;
   // set moves to 0 in dataBlock
   gameData.moves = 0;
   // set moves to 0 in UI
@@ -182,16 +185,45 @@ function cardClick(event) {
   }
   // 5. if all cards have matched, display a message with the final score (put this functionality in another function that you call from this one)
   if (gameData.matchedCards === 16) {
-    // a. place the game timer in the variable timer before we clear it to
-    // display it in our modal
-    let time = document.querySelector(".clock").innerText;
-    // b. stop the timer
-    clearInterval(interval);
-    // c. display the modal
-    document.winnerModal.display = "block";
-
+    winner();
   }
 } /* end of cardClick function */
+
+function winner() {
+  // a. place the game timer in the variable timer before we clear it to
+  // display it in our modal
+  let time = document.querySelector("#minutes").innerText + ":" + document.querySelector('#seconds').innerText;
+  // b. stop the timer
+  clearInterval(interval);
+  // c. display the modal
+  const overlay = document.getElementById('overlay');
+  const modal = document.getElementById('winnerModal');
+  const sTime = document.getElementById('sTime');
+  const sRank = document.getElementById('sRank');
+  overlay.classList.toggle('showOverlay');
+  modal.classList.toggle('showModal');
+  sTime.innerText = time;
+  sRank.innerText = gameData.rank;
+  document.querySelector('#button-row').addEventListener('click', openModalResetGame);
+
+}
+
+function openModalResetGame(event) {
+  const overlay = document.getElementById('overlay');
+  const modal = document.getElementById('winnerModal');
+  if (!event.target.matches('button')) {
+      return;
+  }
+  if (event.target.matches(".btn-close")) {
+    overlay.classList.toggle('showOverlay');
+    modal.classList.toggle('showModal');
+  }
+  if (event.target.matches('.btn-reset')) {
+      overlay.classList.toggle('showOverlay');
+      modal.classList.toggle('showModal');
+    init();
+  }
+}
 
 //@@ updateTimer is a function that is called every second by the interval setup
 //@ in the init() function and creates a game timer that counts up and displays
