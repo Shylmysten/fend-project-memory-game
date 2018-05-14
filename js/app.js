@@ -8,27 +8,39 @@ const gameData = {
   seconds: 0,
   minutes: 0
 };
-
+// initialize variable interval as global to be used in other functions
 let interval = null;
+// Initialize begins and resets the game
 init();
 
+//@@ initializes the game, setting scores to 0, shuffles the deck, begins the
+//@ game timer and sets up the eventListeners
 function init() {
+  // in case reset button is clicked reset interval, seconds and minutes and
+  // restart the timer
   clearInterval(interval);
   gameData.seconds = 0;
   gameData.minutes = 0;
   interval = setInterval(updateTimer, 1000);
-  // set moves to 0 in UI
+  // set moves to 0 in dataBlock
   gameData.moves = 0;
+  // set moves to 0 in UI
   document.querySelector(".moves").innerText = gameData.moves + " Moves";
+  // begin the game to 3
   gameData.rank = 3;
+  // clear the openCards list
   gameData.openCards = [];
+  // Begin the game with 3 stars in the DOM
   gameData.stars.innerHTML = `<li><i class="fa fa-star"></i></li>
                         <li><i class="fa fa-star"></i></li>
                         <li><i class="fa fa-star"></i></li>`;
 
   // Create a list that holds all of your cards
   const cards = document.querySelectorAll(".card");
+
+  // initialize the variable deck with an empty array
   let deck = [];
+  // loop through the NodeList of cards and push each one into the array deck
   for (let i = 0; i < cards.length; i++) {
     const card = cards[i];
     deck.push(card);
@@ -40,9 +52,10 @@ function init() {
   deck = shuffle(deck);
 
   //   2. Update UI with the new deck
+
   //  a. select deck in the UI
   const UIDeck = document.querySelector(".deck");
-  //  b. remove all list items(cards) from the ul(deck) element
+  //  b. remove all list items(cards) from the ul(deck) element in the UI
   while (UIDeck.firstChild) {
     UIDeck.removeChild(UIDeck.firstChild);
   }
@@ -54,17 +67,18 @@ function init() {
   for (let i = 0; i < deck.length; i++) {
     const newElement = deck[i];
     newElement.setAttribute("class", "card");
+    // append the shuffled cards to the document fragment
     shuffledCards.appendChild(newElement);
   }
 
   //  e. Append fragment(newly shuffled cards) to the ul.deck in the DOM
   UIDeck.appendChild(shuffledCards);
 
-  //  d. set up the event listener for a card. If a card is clicked:
+  //  f. set up the event listener for a card. If a card is clicked:
   UIDeck.addEventListener("click", cardClick);
-  //  e. set up event listener for restart button
+  //  g. set up event listener for restart button
   document.querySelector(".restart").addEventListener("click", init);
-}
+} /* end of init function */
 
 // Shuffle function from http://stackoverflow.com/a/2450976
 function shuffle(array) {
@@ -81,8 +95,12 @@ function shuffle(array) {
   }
 
   return array;
-}
+} /* end of shuffle function */
 
+
+//@@@ the cardClick function is the main game engine that processes all USER
+//@ ACTIONS, updates the dataBlock and the UI to reflect those actions. Logic
+//@ for nearly all USER Actions are contained within, with exception to reset
 function cardClick(event) {
   // 1. is the target a card? is it already open, or matched?
   if (
@@ -103,7 +121,7 @@ function cardClick(event) {
   gameData.moves++;
   // d. Update moves in UI
   document.querySelector(".moves").innerText = gameData.moves + " Moves";
-  // e. check moveCount for star rating
+  // e. check moveCount for Game Rank in "star"
   if (
     (gameData.moves === 26) |
     (gameData.moves === 38) |
@@ -142,9 +160,12 @@ function cardClick(event) {
       // vi. if cards don't match
       card1.classList.remove("flipInY");
       card2.classList.remove("flipInY");
-      // vii. Function wobble calls allows wobble animation to complete
+      // vii. Function wobble calls wobble but allows the animation to complete
       // before flipping the cards back over and removing the wobble class
       function wobble() {
+        // setTimeout adds the animation class "wobble" but allow a second to
+        // pass for the wobble animation to complete before removing classes
+        // that would affect the animation
         setTimeout(function() {
           card1.classList.remove("show", "open", "wobble");
           card2.classList.remove("show", "open", "wobble");
@@ -161,19 +182,61 @@ function cardClick(event) {
   }
   // 5. if all cards have matched, display a message with the final score (put this functionality in another function that you call from this one)
   if (gameData.matchedCards === 16) {
+    // a. place the game timer in the variable timer before we clear it to
+    // display it in our modal
     let time = document.querySelector(".clock").innerText;
+    // b. stop the timer
     clearInterval(interval);
-  }
-}
+    // c. display the modal
+    document.winnerModal.display = "block";
 
+  }
+} /* end of cardClick function */
+
+//@@ updateTimer is a function that is called every second by the interval setup
+//@ in the init() function and creates a game timer that counts up and displays
+//@ the clock and updates to the clock in the UI
 function updateTimer() {
-  let sec = 0;
-  const secs = (++gameData.seconds % 60).toString();
-  const mins = parseInt(gameData.seconds / 60).toString();
-  document.getElementById("seconds").innerHTML =
-    secs.length < 2 ? "0" + secs : secs;
-  document.getElementById("minutes").innerHTML =
-    mins.length < 2 ? "0" + mins : mins;
+  // increment the seconds in the dataBlock and convert them to a string, then
+  // place the result in the variable seconds within the updateTimer function
+  let seconds = (++gameData.seconds).toString();
+  // convert the variable minutes in the dataBlock to a string and store the
+  // results in the variable minutes
+  let minutes = (gameData.minutes).toString();
+
+  // are there less than two characters in the string "seconds"
+  if (seconds.length < 2) {
+    // if so, we need to prepend a "0" to the string in order for it to display
+    // correctly
+    document.getElementById("seconds").innerHTML = "0" + seconds;
+    // has the seconds counted reached 60?
+  } else if (gameData.seconds === 60) {
+    // if so, we need to reset both the seconds variable and the counted seconds
+    // in the datablock back to 0
+    seconds = gameData.seconds = 0;
+    // 60 seconds = 1 minutes so increment the minutes to reflect a minute has
+    // passed
+    ++gameData.minutes;
+    // display the seconds in the UI and since we reset them to 0 we'll need to
+    // prepend a "0" in order for it to display correctly
+    document.getElementById("seconds").innerHTML = "0" + seconds;
+    // are there less than 2 characters in the minutes string
+    if (minutes.length < 2 ) {
+      // if so we need to prepend a "0" in order for it to display correctly in
+      // the UI
+      document.getElementById("minutes").innerHTML = "0" + gameData.minutes;
+    } else {
+      // if there are more than 2 characters, then just display the minutes in
+      // the UI
+      document.getElementById("minutes").innerHTML = gameData.minutes;
+    }
+    // if there are more than 2 characters in the seconds variable
+  } else {
+    // then display the seconds in the UI
+    document.getElementById("seconds").innerHTML = seconds;
+  }
+
+
 }
 
 /*  - display the card's symbol (put this functionality in another function that you call from this one) */
