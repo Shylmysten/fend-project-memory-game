@@ -23,4 +23,4 @@ Simply point your browser to https://shylmysten.github.io/fend-project-memory-ga
 
 ## Hat Tips
 
-The cross-browser library, Animate.css was utilized in this project. It can be found [here](https://github.com/daneden/animate.css).
+The cross-browser library, **Animate.css**, was utilized in this project. It can be found [here](https://github.com/daneden/animate.css).
