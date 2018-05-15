@@ -22,7 +22,9 @@ function init() {
   clearInterval(interval);
   gameData.seconds = 0;
   gameData.minutes = 0;
-  interval = setInterval(updateTimer, 1000);
+  document.querySelector('#seconds').innerHTML = "00";
+  document.querySelector('#minutes').innerHTML = "00";
+  // interval = setInterval(updateTimer, 1000);
   // reset cards matched back to 0
   gameData.matchedCards = 0;
   // set moves to 0 in dataBlock
@@ -114,6 +116,10 @@ function cardClick(event) {
     // then we're not interested
     return;
   }
+  // start the game clock
+  if (gameData.moves < 1) {
+    interval = setInterval(updateTimer, 1000);
+    }
 
   // 1. if the card isn't open
   // a. add open, show, flipInY, and animated classes
