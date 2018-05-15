@@ -201,8 +201,10 @@ function cardClick(event) {
       const modal = document.getElementById('winnerModal');
       const sTime = document.getElementById('sTime');
       const sRank = document.getElementById('sRank');
+      const sMoves = document.getElementById('sMoves');
       overlay.classList.toggle('showOverlay');
       modal.classList.toggle('showModal');
+      sMoves.innerText = gameData.moves;
       sTime.innerText = time;
       sRank.innerText = gameData.rank;
       document.querySelector('#button-row').addEventListener('click', openModalResetGame);
@@ -246,9 +248,8 @@ function updateTimer() {
   // increment the seconds in the dataBlock and convert them to a string, then
   // place the result in the variable seconds within the updateTimer function
   let seconds = (++gameData.seconds).toString();
-  // convert the variable minutes in the dataBlock to a string and store the
-  // results in the variable minutes
-  let minutes = (gameData.minutes).toString();
+
+
 
   // are there less than two characters in the string 'seconds'
   if (seconds.length < 2) {
@@ -267,7 +268,7 @@ function updateTimer() {
     // prepend a '0' in order for it to display correctly
     document.getElementById('seconds').innerHTML = '0' + seconds;
     // are there less than 2 characters in the minutes string
-    if (minutes.length < 2 ) {
+    if ((gameData.minutes.toString).length < 2 ) {
       // if so we need to prepend a '0' in order for it to display correctly in
       // the UI
       document.getElementById('minutes').innerHTML = '0' + gameData.minutes;
